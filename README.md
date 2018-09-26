@@ -1,5 +1,8 @@
 # diypowerflow
-DIY Powerflow
+DIY Powerflow V2 (Esperyd edition)
+
+I forked this to change it to 3 outputs. I will also add some custom things to it.
+
 
 This a DIY version of the powerflow screen on the Tesla powerwall app.
 

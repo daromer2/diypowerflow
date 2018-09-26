@@ -126,12 +126,20 @@ svg.on text {
    stroke: #00b3f6;
 }
 
+#guest.on circle {
+   stroke: #33FFFD;
+}
+
+#garage.on circle {
+   stroke: #F633FF;
+}
+
 #powerwall.on circle {
    stroke: #00d700;
 }
 
 #grid.on circle {
-   stroke: #ffffff;
+   stroke: #FF3333;
 }
 
 #lines rect.on {

@@ -20,7 +20,7 @@
  * Enables or disables filtering for cross domain requests.
  * Recommended value: true
  */
-define('CSAJAX_FILTERS', true);
+define('CSAJAX_FILTERS', false);
 
 /**
  * If set to true, $valid_requests should hold only domains i.e. a.example.com, b.example.com, usethisdomain.com
@@ -32,13 +32,13 @@ define('CSAJAX_FILTER_DOMAIN', true);
 /**
  * Set debugging to true to receive additional messages - really helpful on development
  */
-define('CSAJAX_DEBUG', false);
+define('CSAJAX_DEBUG', true);
 
 /**
  * A set of valid cross domain requests
  */
 $valid_requests = array(
-    'emoncms.org'
+    'emoncms.org','localhost:1880'
 );
 
 /**
