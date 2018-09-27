@@ -8,7 +8,11 @@ This a DIY version of the powerflow screen on the Tesla powerwall app.
 
 You can check a running example at:
 
-https://diypowerflow.herokuapp.com/
+https://powerflow.romer.se
+Above link uses my data live from my house. In progress so dont expect it always to be online
+
+
+## Legacy text below
 
 This example uses (for now) mine hardcoded userid of emoncms.
 
