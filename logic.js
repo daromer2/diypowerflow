@@ -63,27 +63,27 @@ function updateValuesFromEmonFeed(data) {
     for (var i = 0, len = data.length; i < len; i++) {
         // SOLAR
         if (data[i].name == solar_watt_name) {
-            //if(data[i].time + max_inactive_seconds >= now){
+            if(data[i].time + max_inactive_seconds >= now){
             solar_watt = data[i].value;
-            // } else {
-            //   solar_watt = 0;
-            // }
+            } else {
+              solar_watt = 0;
+            }
         }
         // guest
         if (data[i].name == guest_watt_name) {
-            //if(data[i].time + max_inactive_seconds >= now){
+            if(data[i].time + max_inactive_seconds >= now){
             guest_watt = data[i].value;
-            // } else {
-            //   guest_watt = 0;
-            // }
+            } else {
+              guest_watt = 0;
+            }
         }
         // garage
         if (data[i].name == garage_watt_name) {
-            //if(data[i].time + max_inactive_seconds >= now){
+            if(data[i].time + max_inactive_seconds >= now){
             garage_watt = data[i].value;
-            // } else {
-            //   garage_watt = 0;
-            // }
+            } else {
+               garage_watt = 0;
+            }
         }
 
         if (data[i].name == solar_kwh_name) {
@@ -91,11 +91,11 @@ function updateValuesFromEmonFeed(data) {
         }
         // GRID
         if (data[i].name == grid_watt_name) {
-            //if(data[i].time + max_inactive_seconds >= now){
+            if(data[i].time + max_inactive_seconds >= now){
             grid_watt = data[i].value;
-            // } else {
-            //   grid_watt = 0;
-            // }
+            } else {
+               grid_watt = 0;
+            }
         }
         if (data[i].name == grid_kwh_name) {
             grid_kwh = data[i].value;
@@ -103,22 +103,22 @@ function updateValuesFromEmonFeed(data) {
 
         // HOUSE
         if (data[i].name == house_watt_name) {
-            //if(data[i].time + max_inactive_seconds >= now){
+            if(data[i].time + max_inactive_seconds >= now){
             house_watt = data[i].value;
-            //} else {
-            // house_watt = 0;
-            //}
+            } else {
+             house_watt = 0;
+            }
         }
         if (data[i].name == house_kwh_name) {
             house_kwh = data[i].value;
         }
         // POWERWALL
         if (data[i].name == powerwall_watt_name) {
-            //if(data[i].time + max_inactive_seconds >= now){
+            if(data[i].time + max_inactive_seconds >= now){
             powerwall_watt = data[i].value;
-            //} else {
-            //  powerwall_watt = 0;
-            // }
+            } else {
+              powerwall_watt = 0;
+             }
         }
         if (data[i].name == powerwall_soc_name) {
             powerwall_soc = data[i].value;
