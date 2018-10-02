@@ -7,15 +7,15 @@ var max_inactive_seconds = 180;
 
 // feed names
 var solar_watt_name = "solar_watt";
-var solar_kwh_name = "pcm60x kwhd";
+var solar_kwh_name = "solar_kwh";
 var grid_watt_name = "grid_watt";
-var grid_kwh_name = "grid kwh today";
+var grid_kwh_name = "grid_kwh";
 var house_watt_name = "house_watt";
-var house_kwh_name = "house kwh today";
+var house_kwh_name = "house_kwh";
 var guest_watt_name = "guest_watt";
-var guest_kwh_name = "guest kwh today";
+var guest_kwh_name = "guest_kwh";
 var garage_watt_name = "garage_watt";
-var garage_kwh_name = "garage kwh today";
+var garage_kwh_name = "garage_kwh";
 
 var powerwall_watt_name = "shunt_watt";
 var powerwall_soc_name = "shunt_soc";
@@ -26,7 +26,8 @@ var powerwall_soc_name = "shunt_soc";
 var solar_watt = 0;
 var solar_kwh = 0;
 var grid_watt = 0;
-var grid_kwh = 0;
+var grid_kwhin = 0;
+var grid_kwhut = 0;
 var house_watt = 0;
 var house_kwh = 0;
 var guest_watt = 0;
@@ -57,6 +58,8 @@ function loadEmoncmsValues() {
     });
 }
 
+
+
 function updateValuesFromEmonFeed(data) {
     var now = Math.round(new Date().getTime() / 1000);
 
@@ -69,7 +72,11 @@ function updateValuesFromEmonFeed(data) {
               solar_watt = 0;
             }
         }
-        // guest
+ 
+        if (data[i].name == solar_kwh_name) {
+            solar_kwh = data[i].value;
+        }
+       // guest
         if (data[i].name == guest_watt_name) {
             if(data[i].time + max_inactive_seconds >= now){
             guest_watt = data[i].value;
@@ -77,7 +84,11 @@ function updateValuesFromEmonFeed(data) {
               guest_watt = 0;
             }
         }
-        // garage
+ 
+        if (data[i].name == guest_kwh_name) {
+            guest_kwh = data[i].value;
+        }
+       // garage
         if (data[i].name == garage_watt_name) {
             if(data[i].time + max_inactive_seconds >= now){
             garage_watt = data[i].value;
@@ -85,11 +96,11 @@ function updateValuesFromEmonFeed(data) {
                garage_watt = 0;
             }
         }
-
-        if (data[i].name == solar_kwh_name) {
-            solar_kwh = data[i].value;
+ 
+        if (data[i].name == garage_kwh_name) {
+            garage_kwh = data[i].value;
         }
-        // GRID
+       // GRID
         if (data[i].name == grid_watt_name) {
             if(data[i].time + max_inactive_seconds >= now){
             grid_watt = data[i].value;
@@ -98,7 +109,8 @@ function updateValuesFromEmonFeed(data) {
             }
         }
         if (data[i].name == grid_kwh_name) {
-            grid_kwh = data[i].value;
+            grid_kwhin = parseFloat(data[i].valuein);
+            grid_kwhut = parseFloat(data[i].valueut);
         }
 
         // HOUSE
@@ -147,6 +159,10 @@ function electronTime(watt) {
     if (w < 3000) {
         return 0.25;
     }
+    if (w > 2999) {
+        return 0.1;
+    }
+
     return 0;
 }
 
@@ -164,6 +180,32 @@ function setAnimationTime(watt, selector1, selector2) {
             $(this).attr("dur", time);
         }
     });
+}
+
+function calc_losses() {
+    main_watt = house_watt + guest_watt + garage_watt;
+powerwall_watt
+	grid_watt
+	solar_watt
+
+	var consumer = main_watt;
+	var producer = solar_watt;
+	if (powerwall_watt < 0 ) {
+		producer += (powerwall_watt*-1);
+	} else {
+		consumer += (powerwall_watt);
+	}
+	if ( grid_watt > 0 ) {
+		producer += grid_watt;
+	} else {
+		consumer += grid_watt*-1;
+	}
+	var losses = Math.round(((producer-consumer) / producer) * 100);
+	console.log("Consumer: " + consumer + " producer: " + producer + " Losses: " + losses + " wattage lost: " + (producer-consumer));
+	$("#losses").text("Lost: " + losses + "% (" + Math.round(producer-consumer) + "w)");
+
+
+
 }
 
 function refresh_ui() {
@@ -188,7 +230,7 @@ function refresh_ui() {
         $("#solar-line").removeClass("on");
         $("#solar-dot").removeClass("on");
     }
-    prec = (solar_kwh > 0) ? 2 : 1;
+    prec = (solar_kwh > 0) ? 3 : 2;
     $("#solar_kwh").text(parseFloat(solar_kwh).toPrecision(prec) + " kWh");
     setAnimationTime(solar_watt, "#solar-dot animate.dot1", "#solar-dot animate.dot2");
 
@@ -209,12 +251,13 @@ function refresh_ui() {
         $("#grid-dot-out").removeClass("on");
         $("#grid-dot-in").removeClass("on");
     }
-    prec = (grid_kwh > 0) ? 2 : 1;
-    $("#grid_kwh").text(parseFloat(grid_kwh).toPrecision(prec) + " kWh");
+    prec1 = (grid_kwhin > 0) ? 2 : 1;
+    prec2 = (grid_kwhut > 0) ? 2 : 1;
+    $("#grid_kwhimport").text("Import: " + parseFloat(grid_kwhin).toPrecision(prec1) + "kWh");
+    $("#grid_kwhexport").text("Export:" + parseFloat(grid_kwhut).toPrecision(prec2) + "kWh ");
     setAnimationTime(grid_watt, "#grid-dot-in animate.dot1, #grid-dot-out animate.dot1", "#grid-dot-in animate.dot2, #grid-dot-out animate.dot2");
 
     if (house_watt > 0) {
-        console.log("should fix house");
         $("#house").addClass("on");
         $("#house_watt").text(Math.round(house_watt) + " w");
         $("#house2-line").addClass("on");
@@ -228,7 +271,7 @@ function refresh_ui() {
         $("#house-dot").removeClass("on");
         $("#house2-dot").removeClass("on");
     }
-    prec = (house_kwh > 0) ? 3 : 1;
+    prec = (house_kwh > 0) ? 2 : 1;
     $("#house_kwh").text(parseFloat(house_kwh).toPrecision(prec) + " kWh");
     setAnimationTime(house_watt, "#house-dot animate.dot1, #house animate.glow", "#house-dot animate.dot2");
     setAnimationTime(house_watt, "#house2-dot animate.dot1, #house animate.glow");
@@ -295,4 +338,5 @@ function refresh_ui() {
 loadData();
 var interval = setInterval(function() {
     loadData();
-}, 5000);
+	calc_losses();
+}, 1000);
